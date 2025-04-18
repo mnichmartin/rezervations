@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Rezervační systém - AI školení</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { text-align: center; }
+        table { border-collapse: collapse; width: 100%; max-width: 800px; margin: auto; }
+        th, td { border: 1px solid #ccc; text-align: center; padding: 10px; }
+        .free { background-color: #c6f6c6; cursor: pointer; }
+        .booked { background-color: #f6c6c6; }
+        #form-container { display: none; max-width: 600px; margin: 20px auto; }
+        label, input, textarea { display: block; width: 100%; margin-bottom: 10px; }
+        input[type="submit"] { width: auto; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Rezervační systém - Školení AI</h1>
+
+<table id="calendar">
+    <thead>
+        <tr><th>Datum</th><th>9:00–12:00</th><th>13:00–16:00</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>1. 11. 2024</td><td class="free" data-slot="2024-11-01-AM">Volné</td><td class="free" data-slot="2024-11-01-PM">Volné</td></tr>
+        <tr><td>2. 11. 2024</td><td class="free" data-slot="2024-11-02-AM">Volné</td><td class="free" data-slot="2024-11-02-PM">Volné</td></tr>
+    </tbody>
+</table>
+
+<div id="form-container">
+    <h2>Rezervace termínu: <span id="selected-slot"></span></h2>
+    <form id="reservation-form">
+        <input type="hidden" name="slot" id="slot-input">
+        <label>Název školy:</label>
+        <input type="text" name="school" required>
+        <label>Adresa školy:</label>
+        <input type="text" name="address" required>
+        <label>Jméno ředitele / ředitelky:</label>
+        <input type="text" name="principal" required>
+        <label>Telefon:</label>
+        <input type="tel" name="phone" required>
+        <label>Kontakt IT - jméno:</label>
+        <input type="text" name="it_contact">
+        <label>Email školy:</label>
+        <input type="email" name="email" required>
+        <label>Poznámka:</label>
+        <textarea name="note"></textarea>
+        <input type="submit" value="Odeslat rezervaci">
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll('.free').forEach(cell => {
+        cell.addEventListener('click', () => {
+            const slot = cell.dataset.slot;
+            document.getElementById('selected-slot').textContent = slot;
+            document.getElementById('slot-input').value = slot;
+            document.getElementById('form-container').style.display = 'block';
+        });
+    });
+
+    document.getElementById('reservation-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const data = new FormData(this);
+        const response = await fetch('submit-reservation.php', {
+            method: 'POST',
+            body: data
+        });
+        if (response.ok) {
+            alert('Rezervace byla úspěšně odeslána.');
+            location.reload();
+        } else {
+            alert('Došlo k chybě. Zkuste to prosím znovu.');
+        }
+    });
+</script>
+
+</body>
+</html>
